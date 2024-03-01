@@ -20,20 +20,23 @@ function affiche_grille(grille) {
     const tbody = table?.getElementsByTagName("tbody")?.[0]
     const thead = table?.getElementsByTagName("thead")?.[0]
     
-    let headrow = thead.insertRow()
-
-    for(let i = 0; i < 7; i++){
-        let headcell = headrow.insertCell()
-        headcell.textContent = i+1
-    }
+    
     
 
     for(let i = 0; i < 6; i++) {
         let row = tbody.insertRow()
         for(let j = 0; j < 7; j++) {
             let cell = row.insertCell()
-            cell.textContent = grille[i][j]
-            console.log(grille[i][j])
+            if(grille[i][j] === 1){
+                cell.innerHTML = '<img src="Coinsplayer1.png" class="coin">'
+            }
+            else if(grille[i][j] === 2){
+                cell.innerHTML = '<img src="Coinsplayer2.png" class="coin">'
+            }
+            else{
+                cell.classList.add('null')
+                cell.textContent = ' / '
+            }
         }
     }
     
@@ -45,7 +48,7 @@ function re_table(){
     const thead = table?.getElementsByTagName("thead")?.[0]
     const row = tbody?.getElementsByTagName("tr")
     const headrows = thead?.getElementsByTagName("tr")
-    thead.removeChild(headrows[0])
+
 
     for (let i = row.length - 1; i >= 0; i--) {
         
@@ -157,38 +160,53 @@ function egalite(grille) {
 let grille = grille_init()
 
 
+
 function jouer() {
     let tour = 0 
-    
-    const form = document?.getElementById("form")
-    const input = document?.getElementById("input")
-    const button = document?.getElementById("button")
-    let colonne
+    const table = document?.getElementById("puissance_grille")
+    const thead = table?.getElementsByTagName("thead")?.[0]
+    let headrow = thead.insertRow()
 
-    input.addEventListener("input", () => {
-        colonne = input.value - 1
-
-    })
+    for(let i = 0; i < 7; i++){
+        let headcell = headrow.insertCell()
+        headcell.classList.add('null')
+        headcell.innerHTML = '<button id="button_colonne_' + i +'">' + '<img src="arrow.gif" class="arrow">'
+            + '</button>' 
+    }
     affiche_grille(grille) 
-    button.addEventListener("click", () => {
-        if (colonne_libre(grille, colonne)) {
-            let joueur = tour % 2 === 0 ? 1 : 2
-            grille = place_jeton(grille, colonne, joueur)
-            re_table()
-            affiche_grille(grille) 
-            if (gagne(grille, joueur)) {
-                console.log(`Le joueur ${joueur} a gagné !`)
-                return alert("JOUEUR " + joueur + " A GAGNE")
-            } else if (egalite(grille)) {
-                return alert("ÉGALITÉ !")
-            } else {
-                tour++
-            }
-        } else {
-            alert("Veuillez sélectionner une colonne non remplie.")
-        }
-    })
+    let colonne
+    for(let i = 0; i < 7; i++){
+        let button_colonne = document?.getElementById("button_colonne_" + i);
+            button_colonne.addEventListener("click", () =>{
+                colonne = i
+                affiche_grille(grille)
+                if (colonne_libre(grille, colonne)) {
+                    let joueur = tour % 2 === 0 ? 1 : 2
+                    grille = place_jeton(grille, colonne, joueur)
+                    re_table()
+                    affiche_grille(grille) 
+                    if (gagne(grille, joueur)) {
+                        console.log(`Le joueur ${joueur} a gagné !`)
+                        return alert("JOUEUR " + joueur + " A GAGNE")
+                    } else if (egalite(grille)) {
+                        return alert("ÉGALITÉ !")
+                    } else {
+                        tour++
+                    }
+                } else {
+                    alert("Veuillez sélectionner une colonne non remplie.")
+                    re_table()
+                    affiche_grille(grille)
+                }
+                
+            })
+    }
+    const replay = document?.getElementById("replay")
+    replay.addEventListener("click", () =>{
+        grille = grille_init()
+        re_table()
+        affiche_grille(grille)
+    } )
     
 }
-
 document.addEventListener("DOMContentLoaded", jouer)
