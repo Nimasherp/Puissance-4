@@ -210,3 +210,7 @@ function jouer() {
     
 }
 document.addEventListener("DOMContentLoaded", jouer)
+//typ script tanspiling
+//babel
+//tsc
+// vite
